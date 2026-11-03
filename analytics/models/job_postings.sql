@@ -1,2 +1,4 @@
+{{ config(materialized='ephemeral')}}
+
 SELECT *
-FROM '../data/raw/raw_job_postings_*.parquet'
+FROM {{ source('raw', 'job_postings') }}

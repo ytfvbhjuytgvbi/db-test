@@ -1,0 +1,71 @@
+version: 2
+
+sources:
+  - name: raw
+    tables:
+      - name: job_postings
+        description: Raw job postings loaded from the pipeline
+        config:
+          external_location: "read_parquet('../data/raw/raw_job_postings_*.parquet')"
+
+models:
+  - name: job_postings
+    description: Raw job postings loaded from parquet files
+    config:
+      persist_docs:
+        relation: true
+        columns: true
+    columns:
+      - name: search_date
+        description: Date when the job was searched
+      - name: search_term
+        description: Search term or job role
+      - name: job_location
+        description: Location of the job posting
+      - name: job_work_from_home
+        description: Indicates whether the job can be performed remotely
+
+  - name: jobs_per_month
+    description: Number of job postings per month and job role
+    config:
+      persist_docs:
+        relation: true
+        columns: true
+    columns:
+      - name: month
+        description: Month of the job search
+      - name: role
+        description: Job role or search term
+      - name: postings
+        description: Number of postings
+
+  - name: top_locations
+    description: Top 10 locations ranked by number of job postings
+    config:
+      persist_docs:
+        relation: true
+        columns: true
+    columns:
+      - name: job_location
+        description: Location of the job postings
+      - name: postings
+        description: Number of postings in each location
+
+  - name: monthly_summary
+    description: Monthly job posting totals and percentage of remote jobs
+    config:
+      persist_docs:
+        relation: true
+        columns: true
+    columns:
+      - name: month
+        description: Month of the job postings
+        data_tests:
+          - unique
+          - not_null
+      - name: total_postings
+        description: Total number of job postings per month
+      - name: remote_postings
+        description: Number of remote job postings per month
+      - name: pct_remote
+        description: Percentage of job postings that are remote
